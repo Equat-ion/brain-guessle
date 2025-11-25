@@ -79,6 +79,7 @@ The mobile version offers:
 **Developed by Thinkraft Labs**
 
 The Original Wordle game is a Property of The New York Times
+
 A passion project combining elegant design with engaging gameplay.
 
 ---
