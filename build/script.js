@@ -9,6 +9,27 @@ let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 
 console.log(rightGuessString)
 
+const animateCSS = (element, animation, prefix = "animate__") =>
+
+    new Promise((resolve, reject) => {
+        const animationName = `${prefix}${animation}`
+        const node = element
+
+        node.style.setProperty('--animate-duration', '0.25s')
+        node.classList.add(`${prefix}animated`, animationName)
+
+        function handleAnimationEnd(event) {
+            event.stopPropagation()
+            node.classList.remove(`${prefix}animated`, animationName)
+            resolve("animation Ended")
+        }
+        node.addEventListener('animationend', handleAnimationEnd, {'once': 'true'})
+    })
+
+
+
+
+
 function initBoard() {
   let board = document.getElementById("gameBoard");
 
@@ -36,6 +57,7 @@ function insertLetter(pressedKey) {
   let row = document.getElementsByClassName("letterRow")[6 - guessesRemaining];
   let box = row.children[nextLetter];
 
+  animateCSS(box,"pulse")
   box.textContent = pressedKey;
   box.classList.add("filled-box");
 
@@ -47,6 +69,8 @@ function deleteLetter() {
   let row = document.getElementsByClassName("letterRow")[6 - guessesRemaining];
   let box = row.children[nextLetter - 1];
 
+
+  animateCSS(box, "pulse")
   box.textContent = "";
   box.classList.remove("filled-box");
 
@@ -65,12 +89,12 @@ function checkGuess() {
   }
 
   if (guessString.length != 5) {
-    alert("not enough letters");
+    toastr.error("Not Enough Letters!");
     return;
   }
 
   if (!WORDS.includes(guessString)) {
-    alert("not in word list");
+    toastr.error("Not a Word!");
     return;
   }
 
@@ -103,6 +127,7 @@ function checkGuess() {
     let box = row.children[i];
     let delay = 250 * i;
     setTimeout(() => {
+        animateCSS(box, 'bounceIn')
       box.style.backgroundColor = guessColors[i];
       shadeKeyboard(currentGuess[i], guessColors[i]);
     }, delay);
@@ -110,7 +135,7 @@ function checkGuess() {
   
   if (guessString === rightGuessString) {
     setTimeout(() => {
-        alert("You Guessed it right, game over")
+        toastr.success("You Guessed it right, game over")
     },1250)
     guessesRemaining = 0
     return
@@ -122,8 +147,7 @@ function checkGuess() {
 
   if (guessesRemaining === 0) {
     setTimeout(() => {
-        alert("You have run out of moves!")
-        alert(`game over, the right word was: "${rightGuessString}"`)
+        toastr.error("You have run out of moves!")
     },1250)
   }
 }
