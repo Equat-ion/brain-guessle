@@ -75,35 +75,51 @@ function checkGuess() {
   }
 
   for (let i = 0; i < 5; i++) {
-    let letterColor = ''
-    let box = row.children[i]
-    let letter = currentGuess[i]
+    let letterColor = "";
+    let box = row.children[i];
+    let letter = currentGuess[i];
 
-    let letterPosition = rightGuess.indexOf(currentGuess[i])
+    let letterPosition = rightGuess.indexOf(currentGuess[i]);
 
     if (letterPosition === -1) {
-        letterColor = 'grey'
+      letterColor = "grey";
+    } else {
+      if (currentGuess[i] === rightGuess[i]) {
+        letterColor = "green";
+      } else {
+        letterColor = "yellow";
+      }
+
+      rightGuess[letterPosition] = "#";
+
+      let delay = 250 * i;
+      setTimeout(() => {
+        box.style.backgroundColor = letterColor;
+        shadeKeyboard(letter, letterColor);
+      }, delay);
     }
 
-    else {
-        if (currentGuess[i] === rightGuess[i]) {
-            letterColor = 'green'
-        }
-        else {
-            letterColor = 'yellow'
-        }
-
-        rightGuess[letterPosition] = "#"
-
-        let delay = 250*i
-        setTimeout(() => {
-            box.style.backgroundColor = letterColor
-            shadeKeyboard(letter,letterColor)
-        },delay)
+    if (guessString === rightGuessString) {
+      alert("You guessed it right, game over");
+      alert(`the right word was: "${rightGuessString}"`);
     }
+  }
+}
 
+function shadeKeyboard(letter, color) {
+  for (const element of document.getElementsByClassName("keyboard-button")) {
+    if (element.textContent === letter) {
+      let oldColor = element.style.backgroundColor;
+      if (oldColor === "green") {
+        return;
+      }
+      if (oldColor === "yellow" && color !== "green") {
+        return;
+      }
 
-
+      element.style.backgroundColor = color;
+      break;
+    }
   }
 }
 
