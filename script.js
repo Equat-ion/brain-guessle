@@ -7,7 +7,7 @@ let nextLetter = 0;
 
 let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 
-console.log(rightGuessString);
+// console.log(rightGuessString);     -- my brother wrote this ❤️
 
 const animateCSS = (element, animation, prefix = "animate__") =>
   new Promise((resolve, reject) => {
