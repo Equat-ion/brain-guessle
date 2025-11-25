@@ -36,7 +36,7 @@ function insertLetter(pressedKey) {
   let row = document.getElementsByClassName("letterRow")[6 - guessesRemaining];
   let box = row.children[nextLetter];
 
-  box.textContent(pressedKey);
+  box.textContent = pressedKey;
   box.classList.add("filled-box");
 
   currentGuess.push(pressedKey);
@@ -44,7 +44,7 @@ function insertLetter(pressedKey) {
 }
 
 function deleteLetter() {
-  let row = document.getElementsByClassName("letterRow")[6 - MAX_GUESSES];
+  let row = document.getElementsByClassName("letterRow")[6 - guessesRemaining];
   let box = row.children[nextLetter - 1];
 
   box.textContent = "";
@@ -55,7 +55,7 @@ function deleteLetter() {
 }
 
 function checkGuess() {
-  let row = document.getElementsByClassName("letterRow")[6 - MAX_GUESSES];
+  let row = document.getElementsByClassName("letterRow")[6 - guessesRemaining];
   let guessString = "";
 
   let rightGuess = Array.from(rightGuessString);
@@ -77,32 +77,48 @@ function checkGuess() {
   for (let i = 0; i < 5; i++) {
     let letterColor = "";
     let box = row.children[i];
-    let letter = currentGuess[i];
+    let letter = currentGuess[i]; 
 
-    let letterPosition = rightGuess.indexOf(currentGuess[i]);
-
-    if (letterPosition === -1) {
-      letterColor = "grey";
-    } else {
-      if (currentGuess[i] === rightGuess[i]) {
+    if (currentGuess[i] === rightGuessString[i]) { 
         letterColor = "green";
-      } else {
+        rightGuess[i] = "#"; 
+        
+    } else if (!rightGuess.includes(currentGuess[i])) { 
+        letterColor = "grey";
+        
+    // 3. CHECK FOR YELLOW (Letter is present, but NOT in this position)
+    // The letter must be present in the (partially masked) rightGuess array
+    } else {
         letterColor = "yellow";
-      }
+        // Find the letter's position in the rightGuess array and mask it
+        rightGuess[rightGuess.indexOf(currentGuess[i])] = "#";
+    }
 
-      rightGuess[letterPosition] = "#";
-
-      let delay = 250 * i;
-      setTimeout(() => {
+    // Apply delay and color
+    let delay = 250 * i;
+    setTimeout(() => {
         box.style.backgroundColor = letterColor;
-        shadeKeyboard(letter, letterColor);
-      }, delay);
-    }
+        shadeKeyboard(currentGuess[i], letterColor);
+    }, delay);
+}
+  
+  if (guessString === rightGuessString) {
+    setTimeout(() => {
+        alert("You Guessed it right, game over")
+    },1250)
+    guessesRemaining = 0
+    return
+  }
 
-    if (guessString === rightGuessString) {
-      alert("You guessed it right, game over");
-      alert(`the right word was: "${rightGuessString}"`);
-    }
+  guessesRemaining -= 1
+  currentGuess = []
+  nextLetter = 0
+
+  if (guessesRemaining === 0) {
+    setTimeout(() => {
+        alert("You have run out of moves!")
+        alert(`game over, the right word was: "${rightGuessString}"`)
+    },1250)
   }
 }
 
@@ -126,7 +142,7 @@ function shadeKeyboard(letter, color) {
 initBoard();
 
 document.addEventListener("keyup", (e) => {
-  if (MAX_GUESSES === 0) {
+  if (guessesRemaining === 0) {
     return;
   }
 
